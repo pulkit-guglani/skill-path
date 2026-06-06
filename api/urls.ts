@@ -17,10 +17,16 @@ export const API_ENV: ApiEnv = (() => {
   return __DEV__ ? "dev" : "prod";
 })();
 
-export const API_BASE_URL = API_ENV === "local"
-  ? DEFAULT_API_BASE_LOCAL
-  : API_ENV === "dev"
-    ? DEFAULT_API_BASE_DEV
-    : API_ENV === "staging"
-      ? DEFAULT_API_BASE_STAGING
-      : DEFAULT_API_BASE_PROD;
+export const API_BASE_URL = (() => {
+  switch (API_ENV) {
+    case "local":
+      return DEFAULT_API_BASE_LOCAL;
+    case "dev":
+      return DEFAULT_API_BASE_DEV;
+    case "staging":
+      return DEFAULT_API_BASE_STAGING;
+    case "prod":
+    default:
+      return DEFAULT_API_BASE_PROD;
+  }
+})();
