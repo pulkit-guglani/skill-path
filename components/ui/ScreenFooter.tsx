@@ -6,6 +6,8 @@ interface ScreenFooterProps extends ViewProps {
   className?: string;
 }
 
+const FOOTER_BOTTOM_PADDING = 36;
+
 /** Fixed bottom bar that sits above the Android/iOS system navigation area. */
 export function ScreenFooter({
   children,
@@ -17,7 +19,9 @@ export function ScreenFooter({
   return (
     <View
       className={`border-t border-outline-variant/10 bg-background/90 px-margin-mobile pt-4 ${className}`}
-      style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+      style={{
+        paddingBottom: Math.max(insets.bottom + 12, FOOTER_BOTTOM_PADDING),
+      }}
       {...props}
     >
       {children}

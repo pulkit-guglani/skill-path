@@ -2,10 +2,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQueryClient } from "@tanstack/react-query";
 import { confirmGoal, createGoal, generateSkillContent } from "@/api/goals";
+import { AiProcessingLoader } from "@/components/ui/AiProcessingLoader";
 import { mergeGeneratedContentIntoSkills } from "@/domain";
 import { useOnboarding } from "@/context/onboarding-context";
 import { goalQueryKeys } from "@/hooks/goals/query-keys";
@@ -89,16 +90,7 @@ export default function GeneratingContentScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background items-center justify-center px-margin-mobile">
       <View className="items-center w-full max-w-lg">
-        <View className="w-48 h-48 items-center justify-center mb-stack-lg">
-          <View className="absolute w-40 h-40 rounded-full bg-primary/10" />
-          <ActivityIndicator size="large" color="#0050cb" />
-          <MaterialIcons
-            name="auto-awesome"
-            size={32}
-            color="#0050cb"
-            style={{ position: "absolute" }}
-          />
-        </View>
+        <AiProcessingLoader />
 
         <Text className="text-2xl font-semibold text-primary text-center mb-2">
           {STATUS_MESSAGES[messageIndex]}

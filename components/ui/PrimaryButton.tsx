@@ -49,13 +49,17 @@ export function PrimaryButton({
   );
 }
 
+const FOOTER_BOTTOM_PADDING = 36;
+
 export function BottomCtaBar({ children }: { children: React.ReactNode }) {
   const insets = useSafeAreaInsets();
 
   return (
     <View
       className="w-full px-margin-mobile pt-4 bg-background border-t border-outline-variant/10"
-      style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+      style={{
+        paddingBottom: Math.max(insets.bottom + 12, FOOTER_BOTTOM_PADDING),
+      }}
     >
       <View className="w-full max-w-xl mx-auto">{children}</View>
     </View>

@@ -64,7 +64,7 @@ export default function RoadmapScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <SkillPathHeader rightIcon="settings" />
+      <SkillPathHeader />
       <ScreenScrollView
         className="flex-1 px-margin-mobile"
         hasFixedFooter

@@ -84,9 +84,7 @@ export default function ResourceScreen() {
 
   function navigateBack() {
     InteractionManager.runAfterInteractions(() => {
-      if (router.canGoBack()) {
-        router.back();
-      }
+      router.replace(`/learn/skill/${skillId}`);
     });
   }
 
@@ -118,7 +116,7 @@ export default function ResourceScreen() {
       <SkillPathHeader
         title={config.title}
         showBack
-        onBack={() => router.back()}
+        onBack={() => router.replace(`/learn/skill/${skillId}`)}
       />
 
       <ScreenScrollView

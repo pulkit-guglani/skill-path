@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { Link, useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback } from "react";
 import {
   ActivityIndicator,
@@ -186,15 +186,27 @@ export default function DashboardScreen() {
                     </Text>
 
                     {isActive ? (
-                      <Link href={`/learn/skill/${skill.id}`} asChild>
-                        <Pressable className="bg-primary px-6 py-3 rounded-full self-start">
-                          <Text className="text-on-primary font-semibold">
-                            Resume Unit
-                          </Text>
-                        </Pressable>
-                      </Link>
+                      <Pressable
+                        className="bg-primary px-6 py-3 rounded-full self-start"
+                        onPress={() =>
+                          router.push(`/learn/skill/${skill.id}`)
+                        }
+                      >
+                        <Text className="text-on-primary font-semibold">
+                          Resume Unit
+                        </Text>
+                      </Pressable>
                     ) : isCompleted ? (
-                      <Text className="text-secondary font-semibold">Passed</Text>
+                      <Pressable
+                        className="bg-secondary-container px-6 py-3 rounded-full self-start"
+                        onPress={() =>
+                          router.push(`/learn/skill/${skill.id}`)
+                        }
+                      >
+                        <Text className="text-on-secondary-container font-semibold">
+                          Review Unit
+                        </Text>
+                      </Pressable>
                     ) : (
                       <Text className="text-on-surface-variant font-semibold">
                         Locked

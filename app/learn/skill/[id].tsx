@@ -79,7 +79,7 @@ export default function SkillDetailScreen() {
       <SkillPathHeader
         title={skill.title}
         showBack
-        onBack={() => router.back()}
+        onBack={() => router.replace("/learn")}
       />
 
       <View className="w-full bg-surface-container-low h-1.5">

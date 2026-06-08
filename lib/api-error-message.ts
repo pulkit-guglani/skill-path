@@ -1,3 +1,5 @@
+import { API_BASE_URL, API_ENV } from "@/api/urls";
+
 function isTimeoutError(error: unknown, message: string): boolean {
   const code = (error as { code?: string })?.code;
   return (
@@ -15,11 +17,15 @@ export function getFriendlyApiErrorMessage(
     const message = error.message.trim();
 
     if (isTimeoutError(error, message)) {
-      return "Lesson generation is taking longer than expected. Keep the API running and try again — large paths can take a few minutes.";
+      return "Lesson generation is taking longer than expected. Please try again — large paths can take a few minutes.";
     }
 
     if (message === "Network Error") {
-      return "Cannot reach the API. Ensure skill-path-api is running (npm run start:dev) and EXPO_PUBLIC_API_ENV=local. Android emulator uses 10.0.2.2; physical devices need EXPO_PUBLIC_API_BASE_URL set to your Mac's LAN IP.";
+      if (API_ENV === "local") {
+        return `Cannot reach the API at ${API_BASE_URL}. Ensure skill-path-api is running locally (npm run start:dev).`;
+      }
+
+      return `Cannot reach the API at ${API_BASE_URL}. Check your internet connection and try again.`;
     }
 
     return message;

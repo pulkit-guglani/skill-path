@@ -13,7 +13,7 @@ export default function DepthScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <SkillPathHeader rightIcon="settings" />
+      <SkillPathHeader />
       <ScreenScrollView
         className="flex-1 px-margin-mobile"
         contentContainerClassName="pt-stack-lg"
@@ -37,9 +37,6 @@ export default function DepthScreen() {
           icon="auto-awesome"
           onPress={() => router.push("/onboarding/generating")}
         />
-        <Text className="text-xs text-outline text-center mt-4">
-          You can adjust this later in your settings.
-        </Text>
       </BottomCtaBar>
     </SafeAreaView>
   );
