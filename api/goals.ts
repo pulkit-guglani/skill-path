@@ -1,23 +1,31 @@
+import type { AxiosResponse } from "axios";
 import { goals } from "@/api/endpoints";
 import {
   GeneratedRoadmapSchema,
+  GeneratedSkillsOutlineSchema,
   GoalSchema,
   SkillSchema,
 } from "@/domain/schemas";
 import type {
   GenerateRoadmapInput,
+  GenerateSkillContentInput,
   GeneratedRoadmap,
+  GeneratedSkillsOutline,
   Goal,
   Skill,
   SkillCompletion,
 } from "@/domain/types";
 import { ApiHandler } from "@/lib/api-handler";
 import {
+  parseApiData,
+  unwrapApiEnvelope,
   unwrapAndParse,
-  unwrapAndParseNullable,
+  unwrapApiEnvelopeNullable,
 } from "@/lib/api-envelope";
+import { normalizeGoalFromApi } from "@/lib/normalize-api-goal";
 
-export const GENERATE_ROADMAP_TIMEOUT_MS = 90_000;
+/** Gemini full-lesson generation often exceeds 90s for multi-skill paths. */
+export const GENERATE_SKILL_CONTENT_TIMEOUT_MS = 240_000;
 
 export interface CreateGoalPayload {
   id: string;
@@ -28,16 +36,45 @@ export interface CreateGoalPayload {
 
 export type UpdateCompletionPayload = Partial<SkillCompletion>;
 
-export async function generateRoadmap(
+export const GENERATE_SKILLS_TIMEOUT_MS = 60_000;
+
+export async function generateSkills(
   input: GenerateRoadmapInput
-): Promise<GeneratedRoadmap> {
+): Promise<GeneratedSkillsOutline> {
   const handler = new ApiHandler({
-    path: goals.generateRoadmap(),
+    path: goals.generateSkills(),
     data: input,
-    timeout: GENERATE_ROADMAP_TIMEOUT_MS,
+    timeout: GENERATE_SKILLS_TIMEOUT_MS,
   });
   const response = await handler.post();
-  return unwrapAndParse(response, GeneratedRoadmapSchema);
+  return unwrapAndParse(response, GeneratedSkillsOutlineSchema);
+}
+
+export async function generateSkillContent(
+  input: GenerateSkillContentInput
+): Promise<GeneratedRoadmap> {
+  const handler = new ApiHandler({
+    path: goals.generateSkillContent(),
+    data: input,
+    timeout: GENERATE_SKILL_CONTENT_TIMEOUT_MS,
+  });
+  const response = await handler.post();
+  return parseApiData(
+    unwrapApiEnvelope<unknown>(response),
+    GeneratedRoadmapSchema
+  ) as GeneratedRoadmap;
+}
+
+export interface DeleteAllGoalsResult {
+  deletedGoals: number;
+}
+
+export async function deleteAllGoals(): Promise<DeleteAllGoalsResult> {
+  const handler = new ApiHandler({
+    path: goals.deleteAll(),
+  });
+  const response = await handler.delete();
+  return unwrapApiEnvelope<DeleteAllGoalsResult>(response);
 }
 
 export async function createGoal(payload: CreateGoalPayload): Promise<Goal> {
@@ -46,7 +83,7 @@ export async function createGoal(payload: CreateGoalPayload): Promise<Goal> {
     data: payload,
   });
   const response = await handler.post();
-  return unwrapAndParse(response, GoalSchema);
+  return parseGoalResponse(response);
 }
 
 export async function getActiveGoal(): Promise<Goal | null> {
@@ -54,7 +91,11 @@ export async function getActiveGoal(): Promise<Goal | null> {
     path: goals.active(),
   });
   const response = await handler.get();
-  return unwrapAndParseNullable(response, GoalSchema);
+  const data = unwrapApiEnvelopeNullable<unknown>(response);
+  if (data === null) {
+    return null;
+  }
+  return parseApiData(normalizeGoalFromApi(data), GoalSchema);
 }
 
 export async function getGoalById(id: string): Promise<Goal> {
@@ -62,7 +103,7 @@ export async function getGoalById(id: string): Promise<Goal> {
     path: goals.byId(id),
   });
   const response = await handler.get();
-  return unwrapAndParse(response, GoalSchema);
+  return parseGoalResponse(response);
 }
 
 export async function confirmGoal(id: string): Promise<Goal> {
@@ -70,7 +111,7 @@ export async function confirmGoal(id: string): Promise<Goal> {
     path: goals.confirm(id),
   });
   const response = await handler.patch();
-  return unwrapAndParse(response, GoalSchema);
+  return parseGoalResponse(response);
 }
 
 export async function updateSkills(
@@ -82,7 +123,7 @@ export async function updateSkills(
     data: { skills },
   });
   const response = await handler.patch();
-  return unwrapAndParse(response, GoalSchema);
+  return parseGoalResponse(response);
 }
 
 export async function updateCompletion(
@@ -95,5 +136,15 @@ export async function updateCompletion(
     data: patch,
   });
   const response = await handler.patch();
-  return unwrapAndParse(response, SkillSchema);
+  return parseApiData(
+    normalizeGoalFromApi(unwrapApiEnvelope<unknown>(response)),
+    SkillSchema
+  );
+}
+
+function parseGoalResponse(response: AxiosResponse<unknown>): Goal {
+  return parseApiData(
+    normalizeGoalFromApi(unwrapApiEnvelope<unknown>(response)),
+    GoalSchema
+  );
 }

@@ -29,11 +29,24 @@ export function unwrapApiEnvelopeNullable<T>(
   return payload.data ?? null;
 }
 
+function formatZodIssues(error: z.ZodError): string {
+  const details = error.issues
+    .map((issue) => {
+      const path = issue.path.length > 0 ? issue.path.join(".") : "response";
+      return `${path}: ${issue.message}`;
+    })
+    .join("; ");
+
+  return details
+    ? `API response failed validation (${details})`
+    : "API response failed validation";
+}
+
 export function parseApiData<T>(data: unknown, schema: z.ZodType<T>): T {
   const result = schema.safeParse(data);
 
   if (!result.success) {
-    throw new ApiRequestError("API response failed validation", {
+    throw new ApiRequestError(formatZodIssues(result.error), {
       data: result.error.flatten(),
     });
   }

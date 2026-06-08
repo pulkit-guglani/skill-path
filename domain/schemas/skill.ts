@@ -1,8 +1,11 @@
 import { z } from "zod";
 import { UUIDSchema } from "./common";
 import {
+  GeneratedLinkResourceSchema,
+  GeneratedReadingArticleSchema,
   LinkResourceSchema,
   PracticeTaskSchema,
+  ReadingArticleSchema,
 } from "./resource";
 
 export const SkillSourceSchema = z.enum(["ai", "custom"]);
@@ -20,15 +23,20 @@ export const SkillSchema = z.object({
   source: SkillSourceSchema,
   whyItMatters: z.string().trim().min(1, "Why it matters is required"),
   videoResource: LinkResourceSchema,
-  readingResource: LinkResourceSchema,
+  readingResource: ReadingArticleSchema,
   practiceTask: PracticeTaskSchema,
   completion: SkillCompletionSchema,
+});
+
+export const GeneratedSkillOutlineSchema = z.object({
+  title: z.string().trim().min(1),
+  whyItMatters: z.string().trim().min(1),
 });
 
 export const GeneratedSkillSchema = z.object({
   title: z.string().trim().min(1),
   whyItMatters: z.string().trim().min(1),
-  videoResource: LinkResourceSchema,
-  readingResource: LinkResourceSchema,
+  videoResource: GeneratedLinkResourceSchema,
+  readingResource: GeneratedReadingArticleSchema,
   practiceTask: PracticeTaskSchema,
 });

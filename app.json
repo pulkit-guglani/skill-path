@@ -18,7 +18,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "io.redrob.boilerplate"
+      "package": "io.redrob.boilerplate",
+      "usesCleartextTraffic": true
     },
     "web": {
       "output": "static",
@@ -34,7 +35,8 @@
           "imageWidth": 170,
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

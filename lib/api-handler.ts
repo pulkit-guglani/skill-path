@@ -11,15 +11,17 @@ export interface HandlerOptions {
 
 export class ApiRequestError extends Error {
   status?: number;
+  code?: string;
   data?: unknown;
 
   constructor(
     message: string,
-    options?: { status?: number; data?: unknown }
+    options?: { status?: number; code?: string; data?: unknown }
   ) {
     super(message);
     this.name = "ApiRequestError";
     this.status = options?.status;
+    this.code = options?.code;
     this.data = options?.data;
   }
 }
@@ -58,7 +60,11 @@ function toApiRequestError(err: unknown): ApiRequestError {
       : "Request failed"
   );
 
-  return new ApiRequestError(message, { status, data });
+  return new ApiRequestError(message, {
+    status,
+    code: typeof anyErr?.code === "string" ? anyErr.code : undefined,
+    data,
+  });
 }
 
 export class ApiHandler {

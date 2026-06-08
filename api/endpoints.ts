@@ -7,8 +7,10 @@ export const user = {
 };
 
 export const goals = {
-  generateRoadmap: () => "/v1/goals/generate-roadmap",
+  generateSkills: () => "/v1/goals/generate-skills",
+  generateSkillContent: () => "/v1/goals/generate-skill-content",
   create: () => "/v1/goals",
+  deleteAll: () => "/v1/goals",
   active: () => "/v1/goals/active",
   byId: (id: string) => `/v1/goals/${id}`,
   confirm: (id: string) => `/v1/goals/${id}/confirm`,

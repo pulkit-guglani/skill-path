@@ -1,5 +1,6 @@
 import {
   GeneratedRoadmapSchema,
+  GeneratedSkillsOutlineSchema,
   GoalSchema,
   MAX_GENERATED_SKILLS,
 } from "@/domain/schemas";
@@ -28,6 +29,17 @@ describe("domain schemas", () => {
     expect(GeneratedRoadmapSchema.parse(sampleGeneratedRoadmap)).toEqual(
       sampleGeneratedRoadmap
     );
+  });
+
+  it("parses a generated skills outline fixture", () => {
+    const outline = {
+      skills: sampleGeneratedRoadmap.skills.map(({ title, whyItMatters }) => ({
+        title,
+        whyItMatters,
+      })),
+    };
+
+    expect(GeneratedSkillsOutlineSchema.parse(outline)).toEqual(outline);
   });
 
   it("rejects roadmaps with too many skills", () => {

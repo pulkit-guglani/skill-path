@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  getActiveGoal,
+  getGoalById,
   updateCompletion,
   type UpdateCompletionPayload,
 } from "@/api/goals";
@@ -47,9 +49,17 @@ export function useUpdateCompletion() {
         );
       }
 
-      // Refetch so goal status stays correct when the backend auto-completes.
-      void queryClient.invalidateQueries({ queryKey: detailKey });
-      void queryClient.invalidateQueries({ queryKey: activeKey });
+      // Defer server refresh until after the resource screen navigates back.
+      setTimeout(() => {
+        void queryClient.fetchQuery({
+          queryKey: activeKey,
+          queryFn: getActiveGoal,
+        });
+        void queryClient.fetchQuery({
+          queryKey: detailKey,
+          queryFn: () => getGoalById(goalId),
+        });
+      }, 0);
     },
   });
 }
